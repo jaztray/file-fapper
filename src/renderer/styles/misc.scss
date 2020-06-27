@@ -1,0 +1,27 @@
+.tickrate{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding: 2px;
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.filename {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    padding: 2px;
+    background: rgba(255, 255, 255, 0.5);
+}
+
+small{
+    font-size: 10px;
+}
+
+.trim {
+    display: block;
+    width: 250px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

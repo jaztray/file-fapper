@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "moduleResolution": "node",
+        "strict": true,
+        "sourceMap": false,
+        "skipLibCheck": true,
+        "module": "es6",
+        "target": "es6",
+        "baseUrl": ".",
+        "allowSyntheticDefaultImports": true,
+        "allowJs": true,
+        "esModuleInterop": true
+    },
+    "exclude": [
+      "node_modules",
+      "src/renderer"
+    ]
+}

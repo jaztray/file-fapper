@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>File Fapper</title>
+</head>
+
+<body>
+    <div id="app" class="container">
+        <div class="content-container">
+            <img ref="imageRef" :src="imagePath" hidden>
+            <video ref="videoRef" id="video-container" src="" loop controls="true" hidden></video>
+        </div>
+
+        <div id="configControls" class="config-controls">
+            <button id="btnConfigControls" class="config-controls__button" v-on:click="toggleControls">⚙️</button>
+
+            <div class="flex-row flex-center">
+                <label class="select-label">Mode</label>
+                <select class="select-inline" size="2" v-model="mode">
+                    <option v-for="option in modeOptions" v-bind:value="option">{{ option }}</option>
+                </select>
+            </div>
+
+            <hr>
+
+            <div v-if="mode === 'manual'">
+                <table>
+                    <tr>
+                        <td><label>Start Tick Rate (ms)</label></td>
+                        <td class="ms"><input type="number" min="150" placeholder="5000" v-model.number="startTickRate"></td>
+                    </tr>
+                    <tr>
+                        <td><label>End Tick Rate (ms)</label></td>
+                        <td class="ms"><input type="number" min="150" placeholder="200" v-model.number="finishTickRate"></td>
+                    </tr>
+                    <tr>
+                        <td><label>Total Duration (s)</label></td>
+                        <td class="s"><input type="number" placeholder="60" v-model.number="totalDuration"></td>
+                    </tr>
+                    <tr>
+                        <td><label>Easing</label></td>
+                        <td>
+                            <select v-model="easing">
+                                <option v-for="option in easingOptions" v-bind:value="option.value">{{ option.text }}</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button class="btn" v-on:click="manualRandomize">Randomize</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div v-if="mode === 'pattern'">
+                <div class="flex-row flex-center control">
+                    <label>Preset</label>
+                    <select v-model="pattern">
+                        <option v-for="option in patternOptions" v-bind:value="option.value">{{ option.text }}</option>
+                    </select>
+                </div>
+                <div class="control">
+                    <label>Tickrate (ms), Duration (s)</label>
+                    <textarea v-model="pattern"></textarea>
+                </div>
+                <button class="btn" v-on:click="patternRandomize">Randomize</button>
+            </div>
+
+            <div v-if="mode === 'browse'">
+                
+            </div>
+
+            <hr>
+
+            <div class="flex-row flex-center">
+                <table>
+                    <tr>
+                        <td><label>Tick Sound</label></td>
+                        <td>
+                            <select v-model="tickSound">
+                                <option value="boop">boop</option>
+                                <option value="clap">clap</option>
+                                <option value="fap">fap</option>
+                                <option value="none">none</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label>Background Sound</label></td>
+                        <td>
+                            <select v-model="backgroundSound">
+                                <option value="none">none</option>
+                                <option value="squishing">squishing</option>
+                                <option value="deepthroat">deepthroat</option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <hr>
+
+            <div>
+                <label>Tick Controller</label>
+                <input type="range" v-model="tickRate" :min="finishTickRate" :max="startTickRate">
+            </div>
+
+            <hr>
+
+            <div class="control">
+                <label for="filePicker" class="btn">Add Files</label>
+                <input id="filePicker" type="file" accept=".jpg,.png,.gif,.mp4,.mkv,.webm" multiple v-on:change="filesPicked">
+                <label for="folderPicker" class="btn">Add Folder</label>
+                <input id="folderPicker" type="file" webkitdirectory multiple v-on:change="filesPicked">
+                <button class="btn" v-on:click="clearFiles">Clear</button>
+                <div>
+                    <label>{{ files.length }} files set</label>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="control">
+                <label class="btn" for="finalFilePicker">Set Final file</label>
+                <input type="file" id="finalFilePicker" accept="image/*,video/*" v-on:change="finalFilePicked">
+                <button class="btn" v-on:click="clearFinalFile">Clear Final file</button>
+                <div>
+                    <label class="trim">{{ finalFile }}</label>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="control">
+                <label for="chkShuffle">Shuffle Files</label>
+                <input type="checkbox" id="chkShuffle" v-model="shuffle">
+            </div>
+
+            <div class="control">
+                <label for="chkMute">Mute Videos</label>
+                <input type="checkbox" id="chkMute" v-model="mute" v-on:change="toggleMute">
+            </div>
+
+            <div class="control">
+                <label for="chkPitch">Pitch Sound</label>
+                <input type="checkbox" id="chkPitch" v-model="pitch">
+            </div>
+
+            <div class="control">
+                <label for="chkRandomVidStart">Randomize Video Time</label>
+                <input type="checkbox" id="chkRandomVidStart" v-model="randomizeVideoTime">
+            </div>
+
+            <div class="control">
+                <label for="chkSync">Sync File Change</label>
+                <input type="checkbox" id="chkSync" v-model="sync">
+            </div>
+
+            <hr>
+
+            <div class="control flex-row">
+                <button class="btn" v-on:click="openFile">Open File in Folder</button>
+                <button class="btn" v-on:click="deleteFile">Delete File</button>
+                <button class="btn" v-on:click="resetConfig">Reset</button>
+            </div>
+        </div>
+
+        <div class="btnbar">
+            <button id="btnPrev">⬅</button>
+            <button id="btnGo" class="btnGo">Go!<br><small>(Spacebar)</small></button>
+            <button id="btnNext">➡</button>
+        </div>
+
+        <div class="filename">{{ getFile() }}</div>
+        <div class="tickrate">{{ tickRateRounded }}</div>
+    </div>
+</body>
+
+</html>
