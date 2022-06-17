@@ -19,7 +19,7 @@
     "autosize": "^4.0.2",
     "css-loader": "^3.4.2",
     "css-modules-typescript-loader": "^4.0.0",
-    "electron": "^7.1.9",
+    "electron": "^15.5.5",
     "electron-builder": "^22.7.0",
     "file-loader": "^5.0.2",
     "howler": "^2.1.3",
